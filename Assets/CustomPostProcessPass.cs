@@ -79,8 +79,9 @@ public class CustomPostProcessPass : ScriptableRenderPass
             SetupBloom(cmd, m_CameraColorTarget);
             
             m_compositeMaterial.SetFloat("_Cutoff", m_BloomEffect.dotsCutoff.value);
-            m_compositeMaterial.SetFloat("_Cutoff", m_BloomEffect.dotsDensity.value);
+            m_compositeMaterial.SetFloat("_Density", m_BloomEffect.dotsDensity.value);
             m_compositeMaterial.SetVector("_Direction", m_BloomEffect.scrollDirection.value);
+            // m_compositeMaterial.SetFloat("_BloomIntensity", m_BloomEffect.intensity.value);
             
             Blitter.BlitCameraTexture(cmd, m_CameraColorTarget, m_CameraColorTarget, m_compositeMaterial, 0);
         }
@@ -90,21 +91,6 @@ public class CustomPostProcessPass : ScriptableRenderPass
         
         CommandBufferPool.Release(cmd);
         
-    }
-    RenderTextureDescriptor GetCompatibleDescriptor()
-        => GetCompatibleDescriptor(m_Descriptor.width, m_Descriptor.height, m_Descriptor.graphicsFormat);
-    
-    RenderTextureDescriptor GetCompatibleDescriptor(int width, int height, GraphicsFormat format, DepthBits depthBufferBits = DepthBits.None)
-        => GetCompatibleDescriptor(m_Descriptor, width, height, format, depthBufferBits);
-    
-    internal static RenderTextureDescriptor GetCompatibleDescriptor(RenderTextureDescriptor desc, int width, int height, GraphicsFormat format, DepthBits depthBufferBits = DepthBits.None)
-    {
-        desc.depthBufferBits = (int)depthBufferBits;
-        desc.msaaSamples = 1;
-        desc.width = width;
-        desc.height = height;
-        desc.graphicsFormat = format;
-        return desc;
     }
     
     void SetupBloom(CommandBuffer cmd, RTHandle source)
@@ -173,4 +159,21 @@ public class CustomPostProcessPass : ScriptableRenderPass
             cmd.SetGlobalFloat("_BloomIntensity", m_BloomEffect.intensity.value);
         }
 
+    
+        RenderTextureDescriptor GetCompatibleDescriptor()
+            => GetCompatibleDescriptor(m_Descriptor.width, m_Descriptor.height, m_Descriptor.graphicsFormat);
+        
+        RenderTextureDescriptor GetCompatibleDescriptor(int width, int height, GraphicsFormat format, DepthBits depthBufferBits = DepthBits.None)
+            => GetCompatibleDescriptor(m_Descriptor, width, height, format, depthBufferBits);
+        
+        internal static RenderTextureDescriptor GetCompatibleDescriptor(RenderTextureDescriptor desc, int width, int height, GraphicsFormat format, DepthBits depthBufferBits = DepthBits.None)
+        {
+            desc.depthBufferBits = (int)depthBufferBits;
+            desc.msaaSamples = 1;
+            desc.width = width;
+            desc.height = height;
+            desc.graphicsFormat = format;
+            return desc;
+        }
+    
 }
